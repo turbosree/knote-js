@@ -4,12 +4,17 @@ const MongoClient = require('mongodb').MongoClient
 const multer = require('multer')
 const marked = require('marked')
 const minio = require('minio')
+const axios = require('axios')
 
 const app = express()
 const port = process.env.PORT || 3000
 const mongoURL = process.env.MONGO_URL || 'mongodb://localhost:27017/dev'
 const minioHost = process.env.MINIO_HOST || 'localhost'
 const minioBucket = 'image-storage'
+
+// Use service URL
+const apiUrl = `http://express-api.default.svc.cluster.local:8080`
+
 
 async function initMongo() {
   console.log('Initialising MongoDB...')
@@ -102,6 +107,7 @@ async function start() {
 }
 
 async function saveNote(db, note) {
+  await axios.get(apiUrl + '/user-create');
   await db.insertOne(note)
 }
 

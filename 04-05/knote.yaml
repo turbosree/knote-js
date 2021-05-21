@@ -1,0 +1,46 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: knote 
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: knote
+  template:
+    metadata:
+      labels:
+        app: knote
+    spec:
+      containers:
+      - name: app
+        image: knote:2.1.0
+        ports:
+        - containerPort: 3000
+        env:
+        - name: MONGO_URL
+          value: mongodb://mongo:27017/mongo-akki
+        - name: MINIO_ACCESS_KEY
+          value: mykey
+        - name: MINIO_SECRET_KEY
+          value: mysecret
+        - name: MINIO_HOST
+          value: minio
+        imagePullPolicy: IfNotPresent
+
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: knote
+spec:
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 3000
+  selector:
+    app: knote
+
+
+
